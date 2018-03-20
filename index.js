@@ -65,12 +65,12 @@ BugsnagLogger.prototype.log = function(level, msg, meta, fn) {
   //
 
   if (_.isError(msg) && !_.isObject(meta.metaData.err)) {
-    meta.metaData.err = { stack: msg.stack, message: msg.message };
+    meta.metaData = { stack: msg.stack, message: msg.message };
     msg = msg.message;
   }
 
   if (_.isError(meta) && !_.isObject(meta.metaData.err)) {
-    meta.metaData.err = { stack: meta.stack, message: meta.message };
+    meta.metaData = { stack: meta.stack, message: meta.message };
     if (!_.isString(msg))
       msg = meta.message;
   }
