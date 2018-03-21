@@ -7,7 +7,7 @@
     "url": "https://github.com/niftylettuce/winston-bugsnag-logger/issues"
   },
   "dependencies": {
-    "bugsnag": "^1.12.0",
+    "bugsnag": "^2.3.1",
     "lodash": "^4.17.4"
   },
   "devDependencies": {

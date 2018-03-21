@@ -54,31 +54,25 @@ BugsnagLogger.prototype.log = function(level, msg, meta, fn) {
   if (this.silent) return fn(null, true);
   if (!(level in this._levelsMap)) return fn(null, true);
 
+  const isMetaAnError  = _.isError(meta);
+
   meta = meta || {};
   meta.severity = this._levelsMap[level];
   meta.metaData = meta.metaData || {};
 
-  //
-  // TODO: this is currently unknown and poorly documented by Bugsnag
-  // (e.g. bugsnag-js sends a different payload than bugsnag-node does)
-  // <insert facepalm here>
-  //
+  if (isMetaAnError) {
+    if (msg) {
+      meta.message = `${msg} - ${meta.message}`;
+    }
 
-  if (_.isError(msg) && !_.isObject(meta.metaData.err)) {
-    meta.metaData = { stack: msg.stack, message: msg.message };
-    msg = msg.message;
+    this.bugsnag.notify(meta, {
+      message: msg,
+      severity: meta.severity,
+    });
+  } else {
+    this.bugsnag.notify(msg, meta);
   }
-
-  if (_.isError(meta) && !_.isObject(meta.metaData.err)) {
-    meta.metaData = { stack: meta.stack, message: meta.message };
-    if (!_.isString(msg))
-      msg = meta.message;
-  }
-
-  this.bugsnag.notify(msg, meta, function() {
-    fn(null, true);
-  });
-
+  return fn(null, true);
 }
 
 module.exports = BugsnagLogger;
